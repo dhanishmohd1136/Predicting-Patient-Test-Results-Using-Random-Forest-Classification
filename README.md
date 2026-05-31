@@ -359,7 +359,6 @@ Potential enhancements include:
 
 M.Sc. Applied Statistics and Data Analytics
 
-AI & ML Engineer | Data Analyst | Data Science Enthusiast
 
 GitHub:
 https://github.com/dhanishmohd1136
