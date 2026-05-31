@@ -2,62 +2,70 @@
 
 ## Project Overview
 
-This project applies Machine Learning techniques to predict patient test outcomes using healthcare-related demographic, clinical, and admission information.
+This project explores the application of Machine Learning techniques to predict patient test result categories using healthcare-related demographic, admission, insurance, medication, and billing information.
 
-The objective is to build a classification model that can assist healthcare organizations in identifying patterns associated with patient test results and support data-driven decision making.
+The project follows a complete end-to-end Machine Learning workflow, including data cleaning, exploratory data analysis, feature engineering, preprocessing, baseline model development, Random Forest classification, hyperparameter tuning, and feature importance analysis.
 
-The project follows a complete Machine Learning workflow including:
-
-- Data Understanding
-- Data Cleaning
-- Exploratory Data Analysis (EDA)
-- Feature Engineering
-- Data Preprocessing
-- Baseline Model Development
-- Random Forest Classification
-- Hyperparameter Tuning
-- Feature Importance Analysis
-- Model Evaluation
+The primary objective is to evaluate whether patient administrative and demographic information can be used to predict healthcare test outcomes and identify the most influential factors affecting predictions.
 
 ---
 
-## Dataset
+## Important Note About the Dataset
 
-**Source:**
+This dataset is a **synthetic healthcare dataset** created for educational, analytical, and machine learning practice purposes.
+
+The dataset does **not represent real patients**, real hospitals, or actual medical records.
+
+As a result:
+
+* Results should not be interpreted as clinically meaningful.
+* Model performance should not be considered representative of real-world healthcare systems.
+* The project is intended for demonstrating data science and machine learning workflows.
+
+---
+
+## Dataset Information
+
+### Source
+
+Healthcare Dataset from Kaggle:
 
 https://www.kaggle.com/datasets/prasad22/healthcare-dataset
 
 ### Dataset Summary
 
-| Metric | Value |
-|----------|----------|
-| Records | 55,500 |
-| Features | 15 |
-| Target Variable | Test Results |
-| Problem Type | Multi-Class Classification |
+| Metric          | Value                      |
+| --------------- | -------------------------- |
+| Records         | 55,500                     |
+| Features        | 15                         |
+| Target Variable | Test Results               |
+| Problem Type    | Multi-Class Classification |
 
 ### Target Classes
 
-| Class |
-|---------|
-| Abnormal |
-| Normal |
+| Class        |
+| ------------ |
+| Abnormal     |
+| Normal       |
 | Inconclusive |
 
-Target distribution is approximately balanced across all three classes.
+### Target Distribution
+
+| Class        | Count  |
+| ------------ | ------ |
+| Abnormal     | 18,437 |
+| Normal       | 18,331 |
+| Inconclusive | 18,198 |
+
+The target variable is well balanced across all classes.
 
 ---
 
-## Business Problem
+## Business Objective
 
-Healthcare providers generate large volumes of patient information during admission and treatment.
+The objective of this project is to investigate whether demographic, admission, insurance, medication, and billing-related variables can be used to predict patient test result categories.
 
-Predicting patient test outcomes can help:
-
-- Improve patient monitoring
-- Support clinical decision making
-- Allocate healthcare resources efficiently
-- Identify high-risk cases earlier
+The project demonstrates how classification models can be developed and evaluated within a healthcare analytics context.
 
 ---
 
@@ -81,8 +89,7 @@ healthcare-random-forest-classification/
 │   ├── 02_eda_and_feature_engineering.ipynb
 │   ├── 03_preprocessing_and_baseline_models.ipynb
 │   ├── 04_random_forest_model.ipynb
-│   ├── 05_hyperparameter_tuning_and_feature_importance.ipynb
-│   └── 06_advanced_random_forest_techniques.ipynb
+│   └── 05_hyperparameter_tuning_and_feature_importance.ipynb
 │
 ├── reports/
 │   └── figures/
@@ -96,13 +103,17 @@ healthcare-random-forest-classification/
 
 ## Data Cleaning
 
-### Duplicate Removal
+### Steps Performed
 
-Duplicate records were identified and removed.
+* Loaded and inspected dataset
+* Checked data types
+* Checked missing values
+* Removed duplicate records
+* Examined target variable distribution
 
 ### Feature Engineering
 
-Created:
+Created a new feature:
 
 ```python
 Length_of_Stay
@@ -116,7 +127,7 @@ Discharge Date - Date of Admission
 
 ### Removed Features
 
-The following features were excluded to prevent data leakage and high-cardinality encoding issues:
+The following columns were removed before modeling:
 
 ```text
 Name
@@ -126,19 +137,27 @@ Date of Admission
 Discharge Date
 ```
 
+Reasons:
+
+* High-cardinality features
+* Potential data leakage
+* Limited predictive value
+* Excessive dimensionality after one-hot encoding
+
 ---
 
 ## Exploratory Data Analysis
 
-EDA was performed to understand:
+EDA was conducted to understand:
 
-- Age distribution
-- Gender distribution
-- Medical conditions
-- Admission types
-- Insurance providers
-- Billing amount distribution
-- Target variable distribution
+* Patient age distribution
+* Gender distribution
+* Medical condition distribution
+* Admission type distribution
+* Insurance provider distribution
+* Billing amount distribution
+* Target class distribution
+* Correlation among numerical variables
 
 ---
 
@@ -146,11 +165,7 @@ EDA was performed to understand:
 
 ### Target Encoding
 
-```python
-LabelEncoder()
-```
-
-used for:
+Label Encoding was applied to:
 
 ```text
 Test Results
@@ -158,11 +173,7 @@ Test Results
 
 ### Categorical Encoding
 
-```python
-pd.get_dummies()
-```
-
-used for:
+One-Hot Encoding was applied to:
 
 ```text
 Gender
@@ -187,501 +198,158 @@ stratify = y
 
 ### Logistic Regression
 
-| Metric | Value |
-|----------|----------|
-| Accuracy | 0.333 |
+| Metric   | Value  |
+| -------- | ------ |
+| Accuracy | 33.33% |
 
 ### Decision Tree Classifier
 
-| Metric | Value |
-|----------|----------|
-| Accuracy | 0.415 |
-
-### Baseline Comparison
-
-| Model | Accuracy |
-|---------|---------|
-| Logistic Regression | 0.333 |
-| Decision Tree | 0.415 |
+| Metric   | Value  |
+| -------- | ------ |
+| Accuracy | 41.55% |
 
 ---
 
 ## Random Forest Classification
 
-### Base Model
+### Base Random Forest
+
+| Metric   | Value  |
+| -------- | ------ |
+| Accuracy | 42.79% |
+
+### Hyperparameter Tuning
+
+GridSearchCV was used to optimize:
 
 ```python
-RandomForestClassifier(
-    random_state=42
-)
+n_estimators
+max_depth
+min_samples_split
+min_samples_leaf
 ```
 
-### Base Model Accuracy
+### Tuned Random Forest
 
-| Model | Accuracy |
-|---------|---------|
-| Random Forest | 0.428 |
+| Metric   | Value  |
+| -------- | ------ |
+| Accuracy | 43.49% |
 
 ---
 
-## Hyperparameter Tuning
+## Classification Performance
 
-### GridSearchCV
-
-Parameters tuned:
-
-```python
-{
-    "n_estimators":[100,200,300],
-    "max_depth":[5,10,20,None],
-    "min_samples_split":[2,5,10],
-    "min_samples_leaf":[1,2,4]
-}
-```
-
-### Best Parameters
-
-```python
-{
-    'max_depth': None,
-    'min_samples_leaf': 2,
-    'min_samples_split': 2,
-    'n_estimators': 300
-}
-```
-
----
-
-## Tuned Random Forest Performance
-
-| Metric | Value |
-|----------|----------|
-| Accuracy | 0.435 |
-
-### Classification Report
-
-| Class | Precision | Recall | F1-Score |
-|---------|---------|---------|---------|
-| Abnormal | 0.44 | 0.45 | 0.44 |
-| Inconclusive | 0.44 | 0.42 | 0.43 |
-| Normal | 0.43 | 0.43 | 0.43 |
+| Class        | Precision | Recall | F1-Score |
+| ------------ | --------- | ------ | -------- |
+| Abnormal     | 0.44      | 0.45   | 0.44     |
+| Inconclusive | 0.44      | 0.42   | 0.43     |
+| Normal       | 0.43      | 0.43   | 0.43     |
 
 ### Overall Metrics
 
-| Metric | Value |
-|----------|----------|
-| Accuracy | 0.435 |
-| Macro Avg F1 | 0.43 |
-| Weighted Avg F1 | 0.43 |
-
----
-
-## Feature Importance
-
-Top features identified by Random Forest:
-
-| Feature | Importance |
-|----------|----------|
-| Billing Amount | 0.175 |
-| Room Number | 0.170 |
-| Age | 0.148 |
-| Length_of_Stay | 0.135 |
-| Gender_Male | 0.027 |
-| Admission Type_Emergency | 0.023 |
-| Admission Type_Urgent | 0.022 |
-
-### Key Insight
-
-Patient demographics and hospital-related variables such as:
-
-- Billing Amount
-- Room Number
-- Age
-- Length of Stay
-
-contributed most to prediction performance.
+| Metric              | Value  |
+| ------------------- | ------ |
+| Accuracy            | 43.49% |
+| Macro Average F1    | 0.43   |
+| Weighted Average F1 | 0.43   |
 
 ---
 
 ## Model Comparison
 
-| Model | Accuracy |
-|---------|---------|
-| Logistic Regression | 0.333 |
-| Decision Tree | 0.415 |
-| Random Forest | 0.428 |
-| Tuned Random Forest | 0.435 |
-
-Random Forest achieved the best overall performance among the evaluated models.
-
----
-
-## Challenges
-
-### Multi-Class Classification
-
-The target variable contains three classes with overlapping characteristics.
-
-### Limited Predictive Signal
-
-The dataset primarily contains administrative and demographic information rather than detailed clinical measurements.
-
-### Feature Leakage Prevention# Predicting Patient Test Results Using Random Forest Classification
-
-## Project Overview
-
-This project applies Machine Learning techniques to predict patient test outcomes using healthcare-related demographic, clinical, and admission information.
-
-The objective is to build a classification model that can assist healthcare organizations in identifying patterns associated with patient test results and support data-driven decision making.
-
-The project follows a complete Machine Learning workflow including:
-
-- Data Understanding
-- Data Cleaning
-- Exploratory Data Analysis (EDA)
-- Feature Engineering
-- Data Preprocessing
-- Baseline Model Development
-- Random Forest Classification
-- Hyperparameter Tuning
-- Feature Importance Analysis
-- Model Evaluation
-
----
-
-## Dataset
-
-**Source:**
-
-https://www.kaggle.com/datasets/prasad22/healthcare-dataset
-
-### Dataset Summary
-
-| Metric | Value |
-|----------|----------|
-| Records | 55,500 |
-| Features | 15 |
-| Target Variable | Test Results |
-| Problem Type | Multi-Class Classification |
-
-### Target Classes
-
-| Class |
-|---------|
-| Abnormal |
-| Normal |
-| Inconclusive |
-
-Target distribution is approximately balanced across all three classes.
-
----
-
-## Business Problem
-
-Healthcare providers generate large volumes of patient information during admission and treatment.
-
-Predicting patient test outcomes can help:
-
-- Improve patient monitoring
-- Support clinical decision making
-- Allocate healthcare resources efficiently
-- Identify high-risk cases earlier
-
----
-
-## Project Structure
-
-```text
-healthcare-random-forest-classification/
-
-│
-├── data/
-│   ├── raw/
-│   │   └── healthcare_dataset.csv
-│   │
-│   └── processed/
-│       ├── cleaned_data.csv
-│       ├── featured_data.csv
-│       └── final_data.csv
-│
-├── notebooks/
-│   ├── 01_data_understanding_and_cleaning.ipynb
-│   ├── 02_eda_and_feature_engineering.ipynb
-│   ├── 03_preprocessing_and_baseline_models.ipynb
-│   ├── 04_random_forest_model.ipynb
-│   ├── 05_hyperparameter_tuning_and_feature_importance.ipynb
-│   └── 06_advanced_random_forest_techniques.ipynb
-│
-├── reports/
-│   └── figures/
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
-```
-
----
-
-## Data Cleaning
-
-### Duplicate Removal
-
-Duplicate records were identified and removed.
-
-### Feature Engineering
-
-Created:
-
-```python
-Length_of_Stay
-```
-
-using:
-
-```python
-Discharge Date - Date of Admission
-```
-
-### Removed Features
-
-The following features were excluded to prevent data leakage and high-cardinality encoding issues:
-
-```text
-Name
-Doctor
-Hospital
-Date of Admission
-Discharge Date
-```
-
----
-
-## Exploratory Data Analysis
-
-EDA was performed to understand:
-
-- Age distribution
-- Gender distribution
-- Medical conditions
-- Admission types
-- Insurance providers
-- Billing amount distribution
-- Target variable distribution
-
----
-
-## Data Preprocessing
-
-### Target Encoding
-
-```python
-LabelEncoder()
-```
-
-used for:
-
-```text
-Test Results
-```
-
-### Categorical Encoding
-
-```python
-pd.get_dummies()
-```
-
-used for:
-
-```text
-Gender
-Blood Type
-Medical Condition
-Insurance Provider
-Admission Type
-Medication
-```
-
-### Train-Test Split
-
-```python
-test_size = 0.20
-random_state = 42
-stratify = y
-```
-
----
-
-## Baseline Models
-
-### Logistic Regression
-
-| Metric | Value |
-|----------|----------|
-| Accuracy | 0.333 |
-
-### Decision Tree Classifier
-
-| Metric | Value |
-|----------|----------|
-| Accuracy | 0.415 |
-
-### Baseline Comparison
-
-| Model | Accuracy |
-|---------|---------|
-| Logistic Regression | 0.333 |
-| Decision Tree | 0.415 |
-
----
-
-## Random Forest Classification
-
-### Base Model
-
-```python
-RandomForestClassifier(
-    random_state=42
-)
-```
-
-### Base Model Accuracy
-
-| Model | Accuracy |
-|---------|---------|
-| Random Forest | 0.428 |
-
----
-
-## Hyperparameter Tuning
-
-### GridSearchCV
-
-Parameters tuned:
-
-```python
-{
-    "n_estimators":[100,200,300],
-    "max_depth":[5,10,20,None],
-    "min_samples_split":[2,5,10],
-    "min_samples_leaf":[1,2,4]
-}
-```
-
-### Best Parameters
-
-```python
-{
-    'max_depth': None,
-    'min_samples_leaf': 2,
-    'min_samples_split': 2,
-    'n_estimators': 300
-}
-```
-
----
-
-## Tuned Random Forest Performance
-
-| Metric | Value |
-|----------|----------|
-| Accuracy | 0.435 |
-
-### Classification Report
-
-| Class | Precision | Recall | F1-Score |
-|---------|---------|---------|---------|
-| Abnormal | 0.44 | 0.45 | 0.44 |
-| Inconclusive | 0.44 | 0.42 | 0.43 |
-| Normal | 0.43 | 0.43 | 0.43 |
-
-### Overall Metrics
-
-| Metric | Value |
-|----------|----------|
-| Accuracy | 0.435 |
-| Macro Avg F1 | 0.43 |
-| Weighted Avg F1 | 0.43 |
+| Model               | Accuracy |
+| ------------------- | -------- |
+| Logistic Regression | 33.33%   |
+| Decision Tree       | 41.55%   |
+| Random Forest       | 42.79%   |
+| Tuned Random Forest | 43.49%   |
+
+The Tuned Random Forest model achieved the best overall performance and was selected as the final model.
 
 ---
 
 ## Feature Importance
 
-Top features identified by Random Forest:
+Top features identified by the Random Forest model:
 
-| Feature | Importance |
-|----------|----------|
-| Billing Amount | 0.175 |
-| Room Number | 0.170 |
-| Age | 0.148 |
-| Length_of_Stay | 0.135 |
-| Gender_Male | 0.027 |
-| Admission Type_Emergency | 0.023 |
-| Admission Type_Urgent | 0.022 |
-
-### Key Insight
-
-Patient demographics and hospital-related variables such as:
-
-- Billing Amount
-- Room Number
-- Age
-- Length of Stay
-
-contributed most to prediction performance.
+| Feature                  | Importance |
+| ------------------------ | ---------- |
+| Billing Amount           | 0.175      |
+| Room Number              | 0.170      |
+| Age                      | 0.148      |
+| Length of Stay           | 0.135      |
+| Gender_Male              | 0.027      |
+| Admission Type_Emergency | 0.023      |
+| Admission Type_Urgent    | 0.022      |
 
 ---
 
-## Model Comparison
+## Key Findings
 
-| Model | Accuracy |
-|---------|---------|
-| Logistic Regression | 0.333 |
-| Decision Tree | 0.415 |
-| Random Forest | 0.428 |
-| Tuned Random Forest | 0.435 |
-
-Random Forest achieved the best overall performance among the evaluated models.
+* Random Forest outperformed both Logistic Regression and Decision Tree models.
+* Hyperparameter tuning improved performance from 42.79% to 43.49%.
+* Billing Amount, Room Number, Age, and Length of Stay were the most influential features.
+* The relatively low predictive performance indicates limited predictive signal within the available variables.
+* Administrative and demographic variables alone are insufficient for highly accurate prediction of patient test outcomes.
 
 ---
 
-## Challenges
+## Limitations
 
-### Multi-Class Classification
+Several factors likely contributed to the modest model performance:
 
-The target variable contains three classes with overlapping characteristics.
-
-### Limited Predictive Signal
-
-The dataset primarily contains administrative and demographic information rather than detailed clinical measurements.
-
-### Feature Leakage Prevention
-
-Several high-cardinality identifier features were removed to improve generalization.
+* The dataset is synthetic rather than real-world clinical data.
+* Features primarily represent administrative and demographic information.
+* No laboratory measurements were available.
+* No vital signs or clinical observations were included.
+* Significant overlap exists between target classes.
+* Important medical predictors are absent from the dataset.
 
 ---
 
 ## Future Improvements
 
-- XGBoost Classifier
-- LightGBM
-- CatBoost
-- SHAP Explainability
-- Cross Validation Optimization
-- Ensemble Learning Approaches
-- Streamlit Deployment
-- Healthcare Dashboard Development
+Potential enhancements include:
+
+* XGBoost Classification
+* LightGBM
+* CatBoost
+* Ensemble Learning
+* SHAP Explainability
+* Cross-Validation Optimization
+* Model Deployment using Streamlit
+* Real-world Healthcare Data Integration
 
 ---
 
 ## Technologies Used
 
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Scikit-Learn
-- Jupyter Notebook
+* Python
+* Pandas
+* NumPy
+* Matplotlib
+* Seaborn
+* Scikit-Learn
+* Jupyter Notebook
+* Git
+* GitHub
+
+---
+
+## Skills Demonstrated
+
+* Data Cleaning
+* Exploratory Data Analysis
+* Feature Engineering
+* One-Hot Encoding
+* Label Encoding
+* Classification Modeling
+* Random Forest Classification
+* Hyperparameter Tuning
+* Feature Importance Analysis
+* Model Evaluation
+* Git Version Control
+* GitHub Project Management
 
 ---
 
@@ -691,48 +359,7 @@ Several high-cardinality identifier features were removed to improve generalizat
 
 M.Sc. Applied Statistics and Data Analytics
 
-AI / ML Engineer | Data Analyst | Data Science Enthusiast
-
-GitHub:
-https://github.com/dhanishmohd1136
-
-
-Several high-cardinality identifier features were removed to improve generalization.
-
----
-
-## Future Improvements
-
-- XGBoost Classifier
-- LightGBM
-- CatBoost
-- SHAP Explainability
-- Cross Validation Optimization
-- Ensemble Learning Approaches
-- Streamlit Deployment
-- Healthcare Dashboard Development
-
----
-
-## Technologies Used
-
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Scikit-Learn
-- Jupyter Notebook
-
----
-
-## Author
-
-**Muhammed Dhanish K**
-
-M.Sc. Applied Statistics and Data Analytics
-
-AI / ML Engineer | Data Analyst | Data Science Enthusiast
+AI & ML Engineer | Data Analyst | Data Science Enthusiast
 
 GitHub:
 https://github.com/dhanishmohd1136
